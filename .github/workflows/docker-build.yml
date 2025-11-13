@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: Build Docker Image
+    name: Build & Push Docker Image
     runs-on: ubuntu-latest
 
     steps:
@@ -16,24 +16,22 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to GitHub Container Registry
+      - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
         run: |
           docker build -t filestorage:latest .
-          docker tag filestorage:latest ghcr.io/${{ github.repository_owner }}/softin:latest
-          docker tag filestorage:latest ghcr.io/${{ github.repository_owner }}/softin:${{ github.sha }}
-          docker push ghcr.io/${{ github.repository_owner }}/softin:latest
-          docker push ghcr.io/${{ github.repository_owner }}/softin:${{ github.sha }}
 
-
+      - name: Tag Docker image
+        run: |
+          docker tag filestorage:latest ${{ secrets.DOCKER_USERNAME }}/softin:latest
+          docker tag filestorage:latest ${{ secrets.DOCKER_USERNAME }}/softin:${{ github.sha }}
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ github.repository }}:latest
-          docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/softin:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/softin:${{ github.sha }}
