@@ -28,6 +28,9 @@ jobs:
           docker build -t filestorage:latest .
           docker tag filestorage:latest ghcr.io/${{ github.repository_owner }}/softin:latest
           docker tag filestorage:latest ghcr.io/${{ github.repository_owner }}/softin:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/softin:latest
+          docker push ghcr.io/${{ github.repository_owner }}/softin:${{ github.sha }}
+
 
 
       - name: Push Docker image
